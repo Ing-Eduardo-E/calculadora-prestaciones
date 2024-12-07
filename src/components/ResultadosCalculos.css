@@ -1,0 +1,107 @@
+.resultados-container {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.resultados-container h2 {
+  color: #1e40af;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.datos-usados-card,
+.resultado-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0;
+}
+
+.datos-usados-card h3,
+.resultado-card h3 {
+  color: #1e40af;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.datos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.dato-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+  background-color: #f8fafc;
+  border-radius: 4px;
+}
+
+.dato-label {
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.dato-valor {
+  color: #1e40af;
+  font-weight: 600;
+}
+
+.resultado-detalles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.detalle-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.detalle-label {
+  color: #4b5563;
+}
+
+.detalle-valor {
+  color: #1e40af;
+  font-weight: 500;
+}
+
+.resultado-final {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #e0e7ff;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.valor-destacado {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1e40af;
+}
+
+@media (max-width: 768px) {
+  .datos-grid {
+      grid-template-columns: 1fr;
+  }
+
+  .detalle-item {
+      flex-direction: column;
+      gap: 0.25rem;
+  }
+
+  .resultado-final {
+      flex-direction: column;
+      text-align: center;
+      gap: 0.5rem;
+  }
+}
