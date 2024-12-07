@@ -181,6 +181,30 @@ const ResultadosCalculos = ({ resultados, datosCalculo }) => {
                     </div>
                 </div>
             )}
+
+            {resultados.interesCesantias && (
+                <div className="resultado-card">
+                    <h3>Intereses a las Cesantías</h3>
+                    <div className="resultado-detalles">
+                        {Object.entries(resultados.interesCesantias.detalles).map(([key, value]) => (
+                            <div key={key} className="detalle-item">
+                                <span className="detalle-label">{key}:</span>
+                                <span className="detalle-valor">
+                                    {typeof value === 'number' 
+                                        ? `$${value.toLocaleString('es-CO')}`
+                                        : value}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="resultado-final">
+                        <span>Valor Total:</span>
+                        <span className="valor-destacado">
+                            ${resultados.interesCesantias.valor.toLocaleString('es-CO')}
+                        </span>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
@@ -216,6 +240,10 @@ ResultadosCalculos.propTypes = {
             valor: PropTypes.number.isRequired,
             detalles: PropTypes.object.isRequired,
             doceavo: PropTypes.number.isRequired,
+        }),
+        interesCesantias: PropTypes.shape({
+            valor: PropTypes.number.isRequired,
+            detalles: PropTypes.object.isRequired,
         }),
     }),
     datosCalculo: PropTypes.shape({

@@ -9,6 +9,7 @@ import { calcularIndemnizacionVacaciones } from './utils/indemnizacionVacaciones
 import { calcularBonificacionRecreacion } from './utils/bonificacionRecreacionCalculator';
 import { calcularPrimaNavidad } from './utils/primaNavidadCalculator';
 import { calcularCesantias } from './utils/cesantiasCalculator';
+import { calcularInteresesCesantias } from './utils/interesesCesantiasCalculator';
 
 function App() {
   const [formData, setFormData] = useState(null);
@@ -25,7 +26,6 @@ function App() {
     };
     setFormData(processedData);
 
-    // Creamos un objeto para almacenar todos los resultados
     const newResultados = {};
 
     // 1. Bonificación por Servicios
@@ -120,6 +120,15 @@ function App() {
         newResultados?.bonificacionServicios?.doceavo || 0,
         newResultados?.primaServicios?.doceavo || 0,
         newResultados?.primaVacaciones?.doceavo || 0,
+        processedData.startDateGeneral,
+        processedData.endDateGeneral
+      );
+    }
+
+    // 8. Intereses a las Cesantías
+    if (processedData.selectedBenefits.interesCesantias && newResultados.cesantias) {
+      newResultados.interesCesantias = calcularInteresesCesantias(
+        newResultados.cesantias.valor,
         processedData.startDateGeneral,
         processedData.endDateGeneral
       );
