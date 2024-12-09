@@ -1,4 +1,9 @@
-import { calcularDiasLaborados, redondear, crearResultado } from './commonCalculations';
+import { 
+    calcularDiasLaborados, 
+    redondear, 
+    crearResultado,
+    validarValorNumerico 
+} from './commonCalculations';
 
 export const calcularPrimaVacaciones = (
     salarioBase,
@@ -6,53 +11,63 @@ export const calcularPrimaVacaciones = (
     auxilioAlimentacion = 0,
     auxilioTransporte = 0,
     doceavoBonificacion = 0,
-    doceavoPrima = 0,
+    doceavoPrimaServicios = 0,
     fechaInicio,
     fechaFin
 ) => {
-    // Base para el cálculo
-    const baseCalculo = 
-        Number(salarioBase) + 
-        Number(gastosRepresentacion) + 
-        Number(auxilioAlimentacion) + 
-        Number(auxilioTransporte) +
-        Number(doceavoBonificacion) +
-        Number(doceavoPrima);
+    try {
+        // Validar y convertir valores numéricos exactos
+        const salarioValidado = Math.floor(validarValorNumerico(salarioBase, 'Salario Base'));
+        const gastosValidados = Math.floor(validarValorNumerico(gastosRepresentacion, 'Gastos de Representación'));
+        const auxilioAlimentacionValidado = Math.floor(validarValorNumerico(auxilioAlimentacion, 'Auxilio de Alimentación'));
+        const auxilioTransporteValidado = Math.floor(validarValorNumerico(auxilioTransporte, 'Auxilio de Transporte'));
+        const doceavoBonificacionValidado = Math.floor(validarValorNumerico(doceavoBonificacion, 'Doceavo Bonificación'));
+        const doceavoPrimaServiciosValidado = Math.floor(validarValorNumerico(doceavoPrimaServicios, 'Doceavo Prima de Servicios'));
 
-    // Días del periodo
-    const diasLaborados = calcularDiasLaborados(fechaInicio, fechaFin);
-    
-    // Días base de vacaciones (15) más días adicionales
-    const diasBasePrimaVacaciones = 15 + calcularDiasAdicionales();
-    
-    // Cálculo proporcional según tiempo laborado
-    const diasProporcionales = (diasBasePrimaVacaciones * diasLaborados) / 360;
-    
-    // Prima = (Base * días proporcionales) / 30
-    const primaVacaciones = (baseCalculo * diasProporcionales) / 30;
-    const valorFinal = redondear(primaVacaciones);
-    const doceavo = redondear(valorFinal / 12);
+        // Base para el cálculo
+        const baseCalculo = 
+            salarioValidado + 
+            gastosValidados + 
+            auxilioAlimentacionValidado + 
+            auxilioTransporteValidado +
+            doceavoBonificacionValidado +
+            doceavoPrimaServiciosValidado;
 
-    const resultado = crearResultado(valorFinal, {
-        'Base de cálculo': baseCalculo,
-        'Días laborados': `${diasLaborados}`,
-        'Valor día': redondear(baseCalculo / 30),
-        'Días base + adicionales': `${diasBasePrimaVacaciones}`,
-        'Días proporcionales': `${redondear(diasProporcionales, 4)}`,
-        '1/12 Bonificación por Servicios': doceavoBonificacion,
-        '1/12 Prima de Servicios': doceavoPrima,
-        'Prima de Vacaciones': valorFinal,
-        '1/12 Prima de Vacaciones': doceavo
-    });
+        // Días laborados y proporción
+        const diasLaborados = calcularDiasLaborados(fechaInicio, fechaFin);
+        const diasBase = 15; // Días base de vacaciones
+        const diasAdicionales = 6; // Sábados, domingos y festivos
+        const diasTotales = diasBase + diasAdicionales;
+        
+        // Para año completo usar 360 días, para parcial calcular proporción
+        const diasAjustados = Math.min(diasLaborados, 360);
+        const proporcion = diasAjustados / 360;
+        const diasProporcionales = diasTotales * proporcion;
 
-    return {
-        ...resultado,
-        doceavo
-    };
-};
+        // Valor día y cálculo final
+        const valorDia = Math.floor(baseCalculo / 30);
+        const primaVacaciones = (baseCalculo * diasProporcionales) / 30;
+        const valorFinal = Math.floor(primaVacaciones);
+        const doceavoPrimaVacaciones = Math.floor(valorFinal / 12);
 
-const calcularDiasAdicionales = () => {
-    return 6; // 4 días de fin de semana + 2 festivos
+        return {
+            ...crearResultado(valorFinal, {
+                'Base de cálculo': baseCalculo,
+                'Días laborados': diasAjustados,
+                'Valor día': valorDia,
+                'Días base + adicionales': diasTotales,
+                'Días proporcionales': redondear(diasProporcionales, 4),
+                '1/12 Bonificación por Servicios': doceavoBonificacionValidado,
+                '1/12 Prima de Servicios': doceavoPrimaServiciosValidado,
+                'Prima de Vacaciones': valorFinal,
+                '1/12 Prima de Vacaciones': doceavoPrimaVacaciones
+            }),
+            doceavo: doceavoPrimaVacaciones
+        };
+    } catch (error) {
+        console.error('Error en el cálculo de la prima de vacaciones:', error);
+        throw error;
+    }
 };
 
 export const obtenerDoceavoPrimaVacaciones = (resultado) => {

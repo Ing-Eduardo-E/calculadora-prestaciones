@@ -2,8 +2,42 @@
 export const calcularDiasLaborados = (fechaInicio, fechaFin) => {
   const inicio = new Date(fechaInicio);
   const fin = new Date(fechaFin);
-  const diferencia = fin - inicio;
-  return Math.ceil(diferencia / (1000 * 60 * 60 * 24)) + 1;
+  const diferenciaDias = Math.ceil((fin - inicio) / (1000 * 60 * 60 * 24)) + 1;
+  
+  // Verificar si es un año completo
+  const esAñoCompleto = verificarAñoCompleto(inicio, fin);
+  
+  // Si es un año completo, retornar 360
+  if (esAñoCompleto) {
+      return 360;
+  }
+  
+  // Para períodos parciales, calcular los días efectivos
+  return diferenciaDias;
+};
+
+const verificarAñoCompleto = (fechaInicio, fechaFin) => {
+  // Calcular la diferencia en años
+  const años = fechaFin.getFullYear() - fechaInicio.getFullYear();
+  const meses = fechaFin.getMonth() - fechaInicio.getMonth();
+  const dias = fechaFin.getDate() - fechaInicio.getDate();
+
+  // Verificar si es exactamente un año
+  // Caso 1: Del 1 de enero al 31 de diciembre del mismo año
+  const esAñoCalendario = 
+      fechaInicio.getDate() === 1 && 
+      fechaInicio.getMonth() === 0 && 
+      fechaFin.getDate() === 31 && 
+      fechaFin.getMonth() === 11 && 
+      años === 0;
+
+  // Caso 2: Cualquier día del mes a ese mismo día del mes del año siguiente
+  const esAñoCompleto = 
+      años === 1 && 
+      meses === 0 && 
+      dias === 0;
+
+  return esAñoCalendario || esAñoCompleto;
 };
 
 // Función para redondear valores a 2 decimales

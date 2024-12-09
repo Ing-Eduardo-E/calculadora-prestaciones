@@ -1,27 +1,43 @@
-import { calcularDiasLaborados, redondear, crearResultado } from './commonCalculations';
+import { 
+    calcularDiasLaborados, 
+    validarValorNumerico,
+    crearResultado 
+} from './commonCalculations';
 
 export const calcularInteresesCesantias = (
     valorCesantias,
     fechaInicio,
     fechaFin
 ) => {
-    // Días del periodo
-    const diasLaborados = calcularDiasLaborados(fechaInicio, fechaFin);
-    
-    // Tasa de interés anual del 12%
-    const tasaInteresAnual = 0.12;
-    
-    // Intereses = (Cesantías * días laborados * tasa) / 360
-    const intereses = (valorCesantias * diasLaborados * tasaInteresAnual) / 360;
-    const valorFinal = redondear(intereses);
+    try {
+        // Validar valor de las cesantías
+        const cesantiasValidadas = Math.floor(validarValorNumerico(valorCesantias, 'Cesantías'));
 
-    const resultado = crearResultado(valorFinal, {
-        'Base Cesantías': valorCesantias,
-        'Días laborados': `${diasLaborados}`,
-        'Tasa de interés anual': '12%',
-        'Proporción': `${(diasLaborados/360 * 100).toFixed(2)}%`,
-        'Intereses calculados': valorFinal
-    });
+        // Días laborados
+        const diasLaborados = calcularDiasLaborados(fechaInicio, fechaFin);
+        const diasAjustados = Math.min(diasLaborados, 360);
+        
+        // Tasa de interés anual (12%)
+        const tasaInteresAnual = 0.12;
+        
+        // Cálculo de intereses
+        // (Cesantías × días × tasa) / 360
+        const intereses = (cesantiasValidadas * diasAjustados * tasaInteresAnual) / 360;
+        const valorFinal = Math.floor(intereses);
 
-    return resultado;
+        const proporcion = ((diasAjustados/360) * 100).toFixed(2);
+
+        return {
+            ...crearResultado(valorFinal, {
+                'Base Cesantías': cesantiasValidadas,
+                'Días laborados': diasAjustados,
+                'Tasa de interés anual': '12%',
+                'Proporción': `${proporcion}%`,
+                'Intereses calculados': valorFinal
+            })
+        };
+    } catch (error) {
+        console.error('Error en el cálculo de los intereses a las cesantías:', error);
+        throw error;
+    }
 };

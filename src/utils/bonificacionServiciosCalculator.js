@@ -1,43 +1,60 @@
-import { redondear, crearResultado } from './commonCalculations';
+import {
+  calcularDiasLaborados,
+  redondear,
+  crearResultado,
+  validarValorNumerico,
+} from "./commonCalculations";
 
 export const calcularBonificacionServicios = (
-    salarioBase,
-    gastosRepresentacion = 0,
-    smlv,
-    fechaInicio,
-    fechaFin
+  salarioBase,
+  gastosRepresentacion = 0,
+  smlv,
+  fechaInicio,
+  fechaFin
 ) => {
-    const baseCalculo = Number(salarioBase) + Number(gastosRepresentacion);
-    const diasLaborados = Math.ceil(
-        (new Date(fechaFin) - new Date(fechaInicio)) / (1000 * 60 * 60 * 24)
-    ) + 1;
-    const dosSmmlv = Number(smlv) * 2;
+  try {
+    // Validar y convertir valores numéricos exactos
+    const salarioValidado = Math.floor(
+      validarValorNumerico(salarioBase, "Salario Base")
+    );
+    const gastosValidados = Math.floor(
+      validarValorNumerico(gastosRepresentacion, "Gastos de Representación")
+    );
+    const smlvValidado = Math.floor(validarValorNumerico(smlv, "SMLV"));
 
-    let bonificacion;
-    if (baseCalculo <= dosSmmlv) {
-        bonificacion = (baseCalculo * diasLaborados / 360) * 0.5;
-    } else {
-        bonificacion = (baseCalculo * diasLaborados / 360) * 0.35;
-    }
+    // Base de cálculo sin redondeo en decimales
+    const baseCalculo = salarioValidado + gastosValidados;
 
-    const valorFinal = redondear(bonificacion);
-    const doceavoBonificacion = redondear(valorFinal / 12);
+    // Verificar si es año completo y obtener días (máximo 360)
+    const diasCalculados = calcularDiasLaborados(fechaInicio, fechaFin);
+    const diasLaborados = Math.min(diasCalculados, 360);
 
-    const resultado = crearResultado(valorFinal, {
-        'Base de cálculo': baseCalculo,
-        'Días laborados': `${diasLaborados}`,
-        'Porcentaje aplicado': baseCalculo <= dosSmmlv ? '50%' : '35%',
-        'Bonificación calculada': valorFinal,
-        '1/12 Bonificación por Servicios': doceavoBonificacion
-    });
+    // Calcular 2 SMLV y determinar el porcentaje
+    const dosSmmlv = smlvValidado * 2;
+    const porcentaje = baseCalculo <= dosSmmlv ? 0.5 : 0.35;
+
+    // Cálculo de la bonificación
+    const bonificacion = (baseCalculo * diasLaborados * porcentaje) / 360;
+    const valorFinal = Math.floor(bonificacion);
+    const doceavoBonificacion = Math.floor(valorFinal / 12);
 
     return {
-        ...resultado,
-        doceavo: doceavoBonificacion
+      ...crearResultado(valorFinal, {
+        "Base de cálculo": baseCalculo,
+        "Días laborados": diasLaborados,
+        "Porcentaje aplicado": `${porcentaje * 100}%`,
+        "Bonificación calculada": valorFinal,
+        "1/12 Bonificación por Servicios": doceavoBonificacion,
+      }),
+      doceavo: doceavoBonificacion,
     };
+  } catch (error) {
+    console.error("Error en el cálculo de la bonificación:", error);
+    throw error;
+  }
 };
 
 export const obtenerDoceavoBonificacion = (resultado) => {
-    if (!resultado) return 0;
-    return resultado.doceavo || 0;
+  if (!resultado) return 0;
+  return resultado.doceavo || 0;
 };

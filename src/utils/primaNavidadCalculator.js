@@ -1,4 +1,8 @@
-import { calcularDiasLaborados, redondear, crearResultado } from './commonCalculations';
+import { 
+    calcularDiasLaborados, 
+    validarValorNumerico,
+    crearResultado 
+} from './commonCalculations';
 
 export const calcularPrimaNavidad = (
     salarioBase,
@@ -11,41 +15,57 @@ export const calcularPrimaNavidad = (
     fechaInicio,
     fechaFin
 ) => {
-    // Base para el cálculo
-    const baseCalculo = 
-        Number(salarioBase) + 
-        Number(gastosRepresentacion) + 
-        Number(auxilioAlimentacion) + 
-        Number(auxilioTransporte) +
-        Number(doceavoPrimaServicios) +
-        Number(doceavoPrimaVacaciones) +
-        Number(doceavoBonificacion);
+    try {
+        // Validar y convertir valores numéricos exactos
+        const salarioValidado = Math.floor(validarValorNumerico(salarioBase, 'Salario Base'));
+        const gastosValidados = Math.floor(validarValorNumerico(gastosRepresentacion, 'Gastos de Representación'));
+        const auxilioAlimentacionValidado = Math.floor(validarValorNumerico(auxilioAlimentacion, 'Auxilio de Alimentación'));
+        const auxilioTransporteValidado = Math.floor(validarValorNumerico(auxilioTransporte, 'Auxilio de Transporte'));
+        const doceavoPrimaServiciosValidado = Math.floor(validarValorNumerico(doceavoPrimaServicios, 'Doceavo Prima de Servicios'));
+        const doceavoPrimaVacacionesValidado = Math.floor(validarValorNumerico(doceavoPrimaVacaciones, 'Doceavo Prima de Vacaciones'));
+        const doceavoBonificacionValidado = Math.floor(validarValorNumerico(doceavoBonificacion, 'Doceavo Bonificación'));
 
-    // Días del periodo
-    const diasLaborados = calcularDiasLaborados(fechaInicio, fechaFin);
-    
-    // Prima de Navidad = (Base * días laborados) / 360
-    const primaNavidad = (baseCalculo * diasLaborados) / 360;
-    const valorFinal = redondear(primaNavidad);
+        // Base para el cálculo
+        const baseCalculo = 
+            salarioValidado + 
+            gastosValidados + 
+            auxilioAlimentacionValidado + 
+            auxilioTransporteValidado +
+            doceavoPrimaServiciosValidado +
+            doceavoPrimaVacacionesValidado +
+            doceavoBonificacionValidado;
 
-    const resultado = crearResultado(valorFinal, {
-        'Base de cálculo': baseCalculo,
-        'Días laborados': `${diasLaborados}`,
-        'Valor día': redondear(baseCalculo / 30),
-        '1/12 Prima de Servicios': doceavoPrimaServicios,
-        '1/12 Prima de Vacaciones': doceavoPrimaVacaciones,
-        '1/12 Bonificación por Servicios': doceavoBonificacion,
-        'Prima de Navidad': valorFinal,
-        'Proporción': `${(diasLaborados/360 * 100).toFixed(2)}%`
-    });
+        // Días laborados
+        const diasLaborados = calcularDiasLaborados(fechaInicio, fechaFin);
+        const diasAjustados = Math.min(diasLaborados, 360);
+        
+        // Valor día y cálculo final
+        const valorDia = Math.floor(baseCalculo / 30);
+        const primaNavidad = (baseCalculo * diasAjustados) / 360;
+        const valorFinal = Math.floor(primaNavidad);
+        const doceavoPrima = Math.floor(valorFinal / 12);
 
-    return {
-        ...resultado,
-        doceavo: redondear(valorFinal / 12)
-    };
+        const proporcion = ((diasAjustados/360) * 100).toFixed(2);
+
+        return {
+            ...crearResultado(valorFinal, {
+                'Base de cálculo': baseCalculo,
+                'Días laborados': diasAjustados,
+                'Valor día': valorDia,
+                '1/12 Prima de Servicios': doceavoPrimaServiciosValidado,
+                '1/12 Prima de Vacaciones': doceavoPrimaVacacionesValidado,
+                '1/12 Bonificación por Servicios': doceavoBonificacionValidado,
+                'Prima de Navidad': valorFinal,
+                'Proporción': `${proporcion}%`
+            }),
+            doceavo: doceavoPrima
+        };
+    } catch (error) {
+        console.error('Error en el cálculo de la prima de navidad:', error);
+        throw error;
+    }
 };
 
-// Función auxiliar para obtener el doceavo
 export const obtenerDoceavoPrimaNavidad = (resultado) => {
     if (!resultado) return 0;
     return resultado.doceavo || 0;
