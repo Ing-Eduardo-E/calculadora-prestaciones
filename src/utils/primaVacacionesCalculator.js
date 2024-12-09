@@ -35,10 +35,10 @@ export const calcularPrimaVacaciones = (
 
     const resultado = crearResultado(valorFinal, {
         'Base de cálculo': baseCalculo,
-        'Días laborados': diasLaborados,
+        'Días laborados': `${diasLaborados}`,
         'Valor día': redondear(baseCalculo / 30),
-        'Días base + adicionales': diasBasePrimaVacaciones,
-        'Días proporcionales': redondear(diasProporcionales, 4),
+        'Días base + adicionales': `${diasBasePrimaVacaciones}`,
+        'Días proporcionales': `${redondear(diasProporcionales, 4)}`,
         '1/12 Bonificación por Servicios': doceavoBonificacion,
         '1/12 Prima de Servicios': doceavoPrima,
         'Prima de Vacaciones': valorFinal,

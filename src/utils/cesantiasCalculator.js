@@ -32,7 +32,7 @@ export const calcularCesantias = (
 
     const resultado = crearResultado(valorFinal, {
         'Base de cálculo': baseCalculo,
-        'Días laborados': diasLaborados,
+        'Días laborados': `${diasLaborados}`,
         'Valor día': redondear(baseCalculo / 30),
         '1/12 Prima de Navidad': doceavoPrimaNavidad,
         '1/12 Bonificación por Servicios': doceavoBonificacion,

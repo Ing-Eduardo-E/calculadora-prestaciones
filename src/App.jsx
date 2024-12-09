@@ -1,5 +1,8 @@
 import { useState } from 'react';
+// Al inicio del archivo App.jsx, junto con las demás importaciones
+import { generateLiquidacionDocument } from './utils/documentGenerator.js';
 import './App.css';
+import Footer from './components/Footer'; // Agregamos esta importación
 import InputForm from './components/InputForm';
 import ResultadosCalculos from './components/ResultadosCalculos';
 import { calcularBonificacionServicios } from './utils/bonificacionServiciosCalculator';
@@ -137,18 +140,37 @@ function App() {
     setResultados(newResultados);
   };
 
+  const handleGenerateDocument = () => {
+    if (resultados && formData) {
+      generateLiquidacionDocument(resultados, formData);
+    }
+  };
+
   return (
-    <div className="app-container">
-      <h1>Calculadora de Prestaciones Laborales</h1>
-      <div className="calculator-container">
-        <InputForm onSubmit={handleFormSubmit} />
-        {formData && resultados && (
-          <ResultadosCalculos 
-            resultados={resultados}
-            datosCalculo={formData}
-          />
-        )}
+    <div className="app-wrapper"> {/* Agregamos un wrapper */}
+      <div className="app-container">
+        <h1>Calculadora de Prestaciones Laborales</h1>
+        <div className="calculator-container">
+          <InputForm onSubmit={handleFormSubmit} />
+          {formData && resultados && (
+            <>
+              <ResultadosCalculos 
+                resultados={resultados}
+                datosCalculo={formData}
+              />
+              <div className="actions-container">
+                <button 
+                  onClick={handleGenerateDocument}
+                  className="generate-doc-button"
+                >
+                  Generar Documento
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
+      <Footer />
     </div>
   );
 }

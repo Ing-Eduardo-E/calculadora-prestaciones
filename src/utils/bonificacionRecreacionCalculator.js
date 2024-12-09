@@ -33,8 +33,8 @@ export const calcularBonificacionRecreacion = (
   const resultado = crearResultado(valorFinal, {
     'Base de cálculo': baseCalculo,
     'Valor día': redondear(valorDia),
-    'Días laborados': diasLaborados,
-    'Días de bonificación': redondear(diasBonificacion, 4),
+    'Días laborados': `${diasLaborados}`,
+    'Días de bonificación': `${redondear(diasBonificacion, 4)}`,
     '1/12 Prima de Servicios': doceavoPrimaServicios,
     '1/12 Bonificación por Servicios': doceavoBonificacionServicios,
     'Bonificación de Recreación': valorFinal

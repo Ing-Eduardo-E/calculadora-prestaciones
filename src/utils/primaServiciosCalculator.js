@@ -27,7 +27,7 @@ export const calcularPrimaServicios = (
 
   const resultado = crearResultado(valorFinal, {
     'Base de cálculo': baseCalculo,
-    'Días laborados': diasLaborados,
+    'Días laborados': `${diasLaborados}`,
     'Valor día': redondear(baseCalculo / 30),
     '1/12 Bonificación por Servicios': doceavoBonificacion,
     'Prima de Servicios': valorFinal,

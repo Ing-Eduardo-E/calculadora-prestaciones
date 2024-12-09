@@ -30,7 +30,7 @@ export const calcularPrimaNavidad = (
 
     const resultado = crearResultado(valorFinal, {
         'Base de cálculo': baseCalculo,
-        'Días laborados': diasLaborados,
+        'Días laborados': `${diasLaborados}`,
         'Valor día': redondear(baseCalculo / 30),
         '1/12 Prima de Servicios': doceavoPrimaServicios,
         '1/12 Prima de Vacaciones': doceavoPrimaVacaciones,

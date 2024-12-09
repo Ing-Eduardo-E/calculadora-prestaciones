@@ -17,7 +17,7 @@ export const calcularInteresesCesantias = (
 
     const resultado = crearResultado(valorFinal, {
         'Base Cesantías': valorCesantias,
-        'Días laborados': diasLaborados,
+        'Días laborados': `${diasLaborados}`,
         'Tasa de interés anual': '12%',
         'Proporción': `${(diasLaborados/360 * 100).toFixed(2)}%`,
         'Intereses calculados': valorFinal

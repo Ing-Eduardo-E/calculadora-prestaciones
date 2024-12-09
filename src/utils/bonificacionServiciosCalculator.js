@@ -25,7 +25,7 @@ export const calcularBonificacionServicios = (
 
     const resultado = crearResultado(valorFinal, {
         'Base de cálculo': baseCalculo,
-        'Días laborados': diasLaborados,
+        'Días laborados': `${diasLaborados}`,
         'Porcentaje aplicado': baseCalculo <= dosSmmlv ? '50%' : '35%',
         'Bonificación calculada': valorFinal,
         '1/12 Bonificación por Servicios': doceavoBonificacion

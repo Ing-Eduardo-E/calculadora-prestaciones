@@ -35,10 +35,10 @@ export const calcularIndemnizacionVacaciones = (
 
     const resultado = crearResultado(valorFinal, {
         'Base de cálculo': baseCalculo,
-        'Días laborados': diasLaborados,
+        'Días laborados': `${diasLaborados}`,
         'Valor día': redondear(valorDia),
-        'Días base': diasBaseIndemnizacion,
-        'Días proporcionales': redondear(diasProporcionales, 4),
+        'Días base': `${diasBaseIndemnizacion}`,
+        'Días proporcionales': `${redondear(diasProporcionales, 4)}`,
         '1/12 Bonificación por Servicios': doceavoBonificacion,
         '1/12 Prima de Servicios': doceavoPrima,
         'Indemnización de Vacaciones': valorFinal
